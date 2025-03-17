@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { FaBars, FaTimes } from 'react-icons/fa'
+import { Link } from 'react-router-dom'
 import "../css/navbar.css"
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -27,29 +29,41 @@ const Navbar = () => {
          </div>
          {/* Desktop menu */}
          <div className='hidden md:flex links gap-10'> 
-                {["Home", "pricing", "Our Work", "contact", "Sign in"].map((item, idx) => (
-                  <a 
+                {[
+                  {name: "Home", path: "/"},
+                  {name: "pricing", path: "/pricing"},
+                  {name: "Our Work", path: "/work"},
+                  {name: "contact", path: "/contact"},
+                  {name: "Sign in", path: "/signin"}
+                ].map((item, idx) => (
+                  <Link 
                     className={`text-black text-lg font-medium capitalize ${idx === 4 && "md:ml-32"} relative group font-sans`} 
-                    href='#' 
+                    to={item.path} 
                     key={idx}
                   >
-                    {item}
+                    {item.name}
                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
-                  </a>
+                  </Link>
                 ))} 
          </div>
          {/* Mobile menu */}
          {isOpen && (
            <div className='md:hidden absolute top-16 left-0 right-0 bg-white py-4 px-4 shadow-md flex flex-col gap-4'>
-             {["Home", "pricing", "Our Work", "contact", "Sign in"].map((item, idx) => (
-               <a 
+             {[
+               {name: "Home", path: "/"},
+               {name: "pricing", path: "/pricing"},
+               {name: "Our Work", path: "/work"},
+               {name: "contact", path: "/contact"},
+               {name: "Sign in", path: "/signin"}
+             ].map((item, idx) => (
+               <Link 
                  className='text-black text-lg font-medium capitalize relative group font-sans' 
-                 href='#' 
+                 to={item.path} 
                  key={idx}
                >
-                 {item}
+                 {item.name}
                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full"></span>
-               </a>
+               </Link>
              ))}
            </div>
          )}
