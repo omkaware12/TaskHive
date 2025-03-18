@@ -12,6 +12,7 @@ import SalesMarketingSection from './components/SalesMarketing';
 import Footer from "./components/footer";
 import SignUp from "./auth/signUp"; 
 import SignIn from "./auth/signIN"
+import Otp from "./auth/otp"
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         } />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/otp" element={<Otp/>}/>
       </Routes>
     </Router>
   );

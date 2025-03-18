@@ -1,20 +1,58 @@
 import React, { useState } from 'react'
 import { FaTasks } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const signIN = () => {
+    const navigate = useNavigate();
     const [formdata, setformdata] = useState({
         email: '',
         password: ''
     })
     
+    const [errors, setErrors] = useState({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    
     const handelchange = (e) => {
         setformdata({...formdata, [e.target.id]: e.target.value})
+        // Clear error when user types
+        if (errors[e.target.id]) {
+          setErrors({ ...errors, [e.target.id]: "" });
+        }
     }
     
+    const validateForm = () => {
+      const newErrors = {};
+      
+      // Email validation
+      if (!formdata.email.trim()) {
+        newErrors.email = "Email is required";
+      } else if (!/\S+@\S+\.\S+/.test(formdata.email)) {
+        newErrors.email = "Email is invalid";
+      }
+      
+      // Password validation
+      if (!formdata.password) {
+        newErrors.password = "Password is required";
+      }
+      
+      return newErrors;
+    };
+    
     const show = (event) => {
-        event.preventDefault()
-        console.log(formdata)
+        event.preventDefault();
+        setIsSubmitting(true);
+        
+        const validationErrors = validateForm();
+        if (Object.keys(validationErrors).length > 0) {
+          setErrors(validationErrors);
+          setIsSubmitting(false);
+          return;
+        }
+        
+        console.log(formdata);
+        // If validation passes, you can redirect or perform login logic
+        // For now, let's just log the data
+        setIsSubmitting(false);
     }
     
   return (
@@ -31,9 +69,9 @@ const signIN = () => {
         </div>
 
         <div className="bg-white shadow-md rounded-xl w-full p-8">
-          <h2 className="text-3xl font-bold mb-8 text-blue-600">Sign  in</h2>
+          <h2 className="text-3xl font-bold mb-8 text-blue-600">Sign in</h2>
           
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={show}>
             <div>
               <label htmlFor='email' className="block text-gray-700 text-1xl mb-2">Email</label>
               <input 
@@ -41,9 +79,10 @@ const signIN = () => {
                 value={formdata.email}
                 onChange={handelchange} 
                 type='email'
-                className="w-full p-3 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none"
+                className={`w-full p-3 bg-gray-100 border ${errors.email ? 'border-red-500' : 'border-none'} rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none`}
                 placeholder="email address"
               />
+              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
             </div>
             
             <div className="relative">
@@ -56,16 +95,18 @@ const signIN = () => {
                 value={formdata.password}
                 onChange={handelchange}
                 type='password'
-                className="w-full p-3 bg-gray-100 border-none rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none"
+                className={`w-full p-3 bg-gray-100 border ${errors.password ? 'border-red-500' : 'border-none'} rounded-lg focus:ring-2 focus:ring-blue-300 focus:outline-none`}
                 placeholder="password"
               />
+              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
             </div>
             
             <button 
-              onClick={show}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition mt-4"
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition mt-4 disabled:bg-blue-300"
             >
-              Log in
+              {isSubmitting ? "Signing in..." : "Log in"}
             </button>
           </form>
           
