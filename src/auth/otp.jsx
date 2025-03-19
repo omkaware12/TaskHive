@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { FaTasks } from 'react-icons/fa'
+import { useAuth } from "../contextAPI/index"; 
 
 const Otp = () => {
+    const { userData } = useAuth();
   const [otp, setOtp] = useState(new Array(6).fill(""));
-  const [email, setEmail] = useState("user@example.com"); 
+  const [email, setEmail] = useState(userData?.email); 
   const inputRefs = useRef([]);
   
   // Handle input change

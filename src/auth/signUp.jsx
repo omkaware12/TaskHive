@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contextAPI/index";
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const { setUserData } = useAuth();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -26,29 +28,23 @@ const SignUp = () => {
   const validateForm = () => {
     const newErrors = {};
     
-    // Check for empty fields
+    
     if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
     if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
     if (!formData.jobTitle.trim()) newErrors.jobTitle = "Job title is required";
     
-    // Email validation
+    
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
     
-    // Password validation
+    
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    } else if (formData.password.length > 16) {
-      newErrors.password = "Password must be less than 16 characters";
-    } else if (!/[A-Z]/.test(formData.password)) {
-      newErrors.password = "Password must contain at least one uppercase letter";
-    } else if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(formData.password)) {
-      newErrors.password = "Password must contain at least one symbol";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
     }
     
     return newErrors;
@@ -65,9 +61,10 @@ const SignUp = () => {
       return;
     }
     
-    console.log(formData);
-    // If validation passes, navigate to OTP page
-    navigate("/otp");
+    console.log("Saving to Context:", formData);
+    setUserData(formData); 
+    
+    navigate("/otp"); 
   };
 
   return (

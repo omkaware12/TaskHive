@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contextAPI/index";
+
 import Navbar from './components/navbar';
 import Landing from './components/landingpage';
 import About from './components/about';
@@ -16,27 +18,29 @@ import Otp from "./auth/otp"
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={
-          <>
-          <Navbar />
-            <Landing />
-            <Featured />
-            <CustomerReviews />
-            <Pricing />
-            <Docs />
-            <Trust />
-            <FAQ />
-            <SalesMarketingSection />
-            <Footer />
-          </>
-        } />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/otp" element={<Otp/>}/>
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={
+            <>
+              <Navbar />
+              <Landing />
+              <Featured />
+              <CustomerReviews />
+              <Pricing />
+              <Docs />
+              <Trust />
+              <FAQ />
+              <SalesMarketingSection />
+              <Footer />
+            </>
+          } />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/otp" element={<Otp />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
