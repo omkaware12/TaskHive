@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contextAPI/index";
+import { validateSignUpForm } from "../utils/validation";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -25,36 +26,11 @@ const SignUp = () => {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    
-    
-    if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
-    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
-    if (!formData.jobTitle.trim()) newErrors.jobTitle = "Job title is required";
-    
-    
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
-    }
-    
-    
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-    
-    return newErrors;
-  };
-
   const show = (event) => {
     event.preventDefault();
     setIsSubmitting(true);
     
-    const validationErrors = validateForm();
+    const validationErrors = validateSignUpForm(formData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setIsSubmitting(false);

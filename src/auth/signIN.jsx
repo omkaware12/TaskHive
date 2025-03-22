@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { FaTasks } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
+import { validateSignInForm } from '../utils/validationSignIN'
+
 
 const signIN = () => {
     const navigate = useNavigate();
@@ -20,29 +22,11 @@ const signIN = () => {
         }
     }
     
-    const validateForm = () => {
-      const newErrors = {};
-      
-      // Email validation
-      if (!formdata.email.trim()) {
-        newErrors.email = "Email is required";
-      } else if (!/\S+@\S+\.\S+/.test(formdata.email)) {
-        newErrors.email = "Email is invalid";
-      }
-      
-      // Password validation
-      if (!formdata.password) {
-        newErrors.password = "Password is required";
-      }
-      
-      return newErrors;
-    };
-    
     const show = (event) => {
         event.preventDefault();
         setIsSubmitting(true);
         
-        const validationErrors = validateForm();
+        const validationErrors = validateSignInForm(formdata);
         if (Object.keys(validationErrors).length > 0) {
           setErrors(validationErrors);
           setIsSubmitting(false);
@@ -50,9 +34,8 @@ const signIN = () => {
         }
         
         console.log(formdata);
-        // If validation passes, you can redirect or perform login logic
-        // For now, let's just log the data
         setIsSubmitting(false);
+        navigate("/dashboard");
     }
     
   return (

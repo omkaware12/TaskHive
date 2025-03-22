@@ -15,6 +15,9 @@ import Footer from "./components/footer";
 import SignUp from "./auth/signUp"; 
 import SignIn from "./auth/signIN"
 import Otp from "./auth/otp"
+import Dashboard from "./Dashboard/Dashboard"
+import Profile from "./Dashboard/profile"
+import Manageplan  from "./Dashboard/Manageplan";
 
 function App() {
   return (
@@ -38,6 +41,9 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/otp" element={<Otp />} />
+          <Route path="/dashboard" element={<Dashboard/>}/>
+          <Route path="/profile" element={<Profile/>}/>
+          <Route path="/manage-plan" element = {<Manageplan/>}/>
         </Routes>
       </Router>
     </AuthProvider>
