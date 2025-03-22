@@ -18,6 +18,7 @@ import Otp from "./auth/otp"
 import Dashboard from "./Dashboard/Dashboard"
 import Profile from "./Dashboard/profile"
 import Manageplan  from "./Dashboard/Manageplan";
+import Createproject  from "./Project/createproject";
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard/>}/>
           <Route path="/profile" element={<Profile/>}/>
           <Route path="/manage-plan" element = {<Manageplan/>}/>
+          <Route path='/createproject' element = {<Createproject/>}/>
         </Routes>
       </Router>
     </AuthProvider>
