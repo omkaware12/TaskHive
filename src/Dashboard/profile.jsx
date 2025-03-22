@@ -53,25 +53,25 @@ const AccountSettings = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 text-gray-900">
+    <div className="flex flex-col md:flex-row h-screen bg-gray-50 text-gray-900">
       <Sidebar activePage="account" />
 
-      <div className="flex-1 p-8 pl-24 max-w-4xl overflow-auto">
-        <h2 className="text-2xl font-semibold mb-6">Account</h2>
+      <div className="flex-1 p-4 md:p-8 mt-16 md:mt-0 md:pl-24 max-w-full md:max-w-4xl overflow-auto">
+        <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6">Account</h2>
 
         {/* Profile Section */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm mb-6">
+        <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm mb-4 md:mb-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-semibold">Profile</h3>
             <button 
               onClick={handleSaveProfile}
-              className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-1 text-sm rounded-lg"
+              className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-3 md:px-4 py-1 text-sm rounded-lg"
             >
               Save
             </button>
           </div>
           
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
             <div 
               onClick={handleImageClick}
               className="w-16 h-16 rounded-full overflow-hidden cursor-pointer border-2 border-gray-200 flex items-center justify-center relative group"
