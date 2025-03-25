@@ -1,18 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Search, User, Download, Menu } from "lucide-react";
 import { FaTasks } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import NewProjectModal from "./NewProjectModal";
+import { ProjectContext } from "../contextAPI/projectcontext";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { project, addProject } = useContext(ProjectContext);
+  // Add a safety check to ensure project is an array
+  const projectList = project || [];
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [formData, setFormData] = useState({
     projectName: "",
-    description: "",
-    deadline: "",
-    category: "",
+    projectDescription: "",
+    projectType: "",
+    startDate: "",
+    priority: "medium"
   });
 
   const goToProfile = () => {
@@ -21,6 +27,34 @@ const Dashboard = () => {
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleProjectCreate = (newProject) => {
+    console.log("Adding project to context:", newProject);
+    addProject(newProject); // Store project in context API
+    console.log("Project list after adding:", project); // This will help debug
+  };
+
+  // Function to get priority color
+  const getPriorityColor = (priority) => {
+    switch(priority) {
+      case 'low': return 'bg-green-100 text-green-800';
+      case 'medium': return 'bg-blue-100 text-blue-800';
+      case 'high': return 'bg-orange-100 text-orange-800';
+      case 'urgent': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  // Function to format date
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    });
   };
 
   return (
@@ -77,9 +111,38 @@ const Dashboard = () => {
         {/* Content Section */}
         <main className="flex-1 p-4 md:p-6 bg-white overflow-auto">
           <h2 className="text-lg font-semibold mb-4">Recent Projects</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Project cards would go here */}
-          </div>
+          
+          {projectList.length === 0 ? (
+            <div className="text-center py-10 text-gray-500">
+              <p>No projects yet. Create your first project!</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {projectList.map((proj, index) => (
+                <div 
+                  key={index} 
+                  className="border border-pink-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-gradient-to-br from-white to-pink-50 cursor-pointer"
+                  onClick={() => navigate(`/project/${proj.id || index}/backlog`)}
+                >
+                  <div className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-medium text-lg truncate">{proj.projectName}</h3>
+                      <span className={`text-xs px-2 py-1 rounded-full ${getPriorityColor(proj.priority)}`}>
+                        {proj.priority.charAt(0).toUpperCase() + proj.priority.slice(1)}
+                      </span>
+                    </div>
+                    
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">{proj.projectDescription}</p>
+                    
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>{proj.projectType}</span>
+                      <span>Start: {formatDate(proj.startDate)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </main>
 
         {/* New Project Modal Component */}
@@ -88,6 +151,7 @@ const Dashboard = () => {
           onClose={() => setIsModalOpen(false)} 
           formData={formData}
           setFormData={setFormData}
+          onProjectCreate={handleProjectCreate}
         />
       </div>
     </div>
