@@ -61,7 +61,7 @@ const Sidebar = ({ activePage }) => {
         <div className="mt-auto">
           <button 
             onClick={() => {
-              navigate('/dashboard');
+              navigate('/taskhive/dashboard/project');
               setIsMobileMenuOpen(false);
             }}
             className="text-sm text-gray-600 hover:text-blue-600"
