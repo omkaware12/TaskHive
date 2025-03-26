@@ -30,9 +30,27 @@ const Dashboard = () => {
   };
 
   const handleProjectCreate = (newProject) => {
-    console.log("Adding project to context:", newProject);
-    addProject(newProject); // Store project in context API
-    console.log("Project list after adding:", project); // This will help debug
+    // Ensure the project has a unique ID and all required fields
+    const projectWithId = {
+      ...newProject,
+      id: Date.now().toString(), // Use timestamp as a simple unique ID
+      projectName: newProject.projectName || "Untitled Project",
+      projectType: newProject.projectType || "Software project",
+      projectDescription: newProject.projectDescription || "",
+      startDate: newProject.startDate || new Date().toISOString().split('T')[0],
+      priority: newProject.priority || "medium"
+    };
+    
+    console.log("Adding project to context:", projectWithId);
+    addProject(projectWithId); // Store project in context API
+    
+    // Close the modal after adding
+    setIsModalOpen(false);
+    
+    // Log the updated project list
+    setTimeout(() => {
+      console.log("Project list after adding:", project);
+    }, 100); // Small delay to allow state update
   };
 
   // Function to get priority color
@@ -90,12 +108,12 @@ const Dashboard = () => {
           </div>
 
           <div className="flex gap-2 md:gap-4 w-full md:w-auto justify-between md:justify-end">
-            <button className="flex items-center gap-1 md:gap-2 bg-white text-gray-800 border px-3 md:px-6 py-2 rounded-lg shadow-sm hover:bg-gray-100 text-sm md:text-base">
-              <Download size={16} /> <span className="hidden sm:inline">Import from URL</span>
+            <button className="flex items-center gap-1 md:gap-2 bg-white text-gray-800 border px-2 md:px-4 py-1.5 rounded-lg shadow-sm hover:bg-gray-100 text-xs md:text-sm">
+              <Download size={14} /> <span className="hidden sm:inline">Import from URL</span>
             </button>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-3 md:px-6 py-2 rounded-lg text-sm md:text-base"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-2 md:px-4 py-1.5 rounded-lg text-xs md:text-sm"
             >
               New Project
             </button>
@@ -122,7 +140,41 @@ const Dashboard = () => {
                 <div 
                   key={index} 
                   className="border border-pink-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-gradient-to-br from-white to-pink-50 cursor-pointer"
-                  onClick={() => navigate(`/project/${proj.id || index}/backlog`)}
+                  onClick={() => {
+                    // Make sure we have a valid ID by checking if it exists and is not undefined
+                    let projectIdentifier;
+                    if (!proj.id || proj.id === 'undefined') {
+                      // Generate a new ID if none exists or if it's undefined
+                      projectIdentifier = Date.now().toString();
+                      
+                      // Create an updated project with the new ID
+                      const updatedProject = {
+                        ...proj,
+                        id: projectIdentifier
+                      };
+                      
+                      // Update the project in context
+                      addProject(updatedProject);
+                      
+                      // Store the updated project in localStorage
+                      localStorage.setItem('currentProject', JSON.stringify(updatedProject));
+                    } else {
+                      projectIdentifier = proj.id;
+                      // Store the project with its existing ID
+                      localStorage.setItem('currentProject', JSON.stringify({
+                        ...proj,
+                        id: projectIdentifier
+                      }));
+                    }
+                    
+                    console.log(`Navigating to project with ID: ${projectIdentifier}`, proj);
+                    
+                    // Also store just the ID separately for easier access
+                    localStorage.setItem('currentProjectId', projectIdentifier);
+                    
+                    // Navigate to the project page with the guaranteed project ID
+                    navigate(`/project/${projectIdentifier}/backlog`);
+                  }}
                 >
                   <div className="p-4">
                     <div className="flex justify-between items-start mb-2">

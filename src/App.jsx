@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contextAPI/index";
 import { ProjectProvider } from "./contextAPI/projectcontext";
 
+
 import Navbar from './components/navbar';
 import Landing from './components/landingpage';
 import About from './components/about';
@@ -19,8 +20,9 @@ import Otp from "./auth/otp";
 import Dashboard from "./Dashboard/Dashboard";
 import Profile from "./Dashboard/profile";
 import Manageplan from "./Dashboard/Manageplan";
-import ProjectDetails from "./Project/ProjectDetails";
 import Back from "./planning/Back"
+import Board from "./Board/baord"
+
 
 
 function App() {
@@ -29,7 +31,7 @@ function App() {
       <ProjectProvider>
         <Router>
           <Routes>
-            <Route path="/" element={
+            <Route path="/taskhive" element={
               <>
                <Navbar />
                 <Landing />
@@ -43,14 +45,14 @@ function App() {
                 <Footer />
               </>
             } />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/otp" element={<Otp />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/taskhive/signin" element={<SignIn />} />
+            <Route path="/taskhive/signup" element={<SignUp />} />
+            <Route path="/taskhive/otp" element={<Otp />} />
+            <Route path="/taskhive/dashboard/project" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/manage-plan" element={<Manageplan />} />
-            <Route path='/project/:id' element={<ProjectDetails />}/>
             <Route path="/project/:id/backlog" element={<Back/>} />
+            <Route path="/project/:id/board" element={<Board/>}/>
           </Routes>
         </Router>
       </ProjectProvider>

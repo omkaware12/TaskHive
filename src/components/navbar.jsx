@@ -30,11 +30,11 @@ const Navbar = () => {
          {/* Desktop menu */}
          <div className='hidden md:flex links gap-10'> 
                 {[
-                  {name: "Home", path: "/"},
-                  {name: "pricing", path: "/pricing"},
-                  {name: "Our Work", path: "/work"},
-                  {name: "contact", path: "/contact"},
-                  {name: "Sign in", path: "/signin"}
+                  {name: "Home", path: "/taskhive"},
+                  {name: "pricing", path: "/taskhive/pricing"},
+                  {name: "Our Work", path: "/taskhive/work"},
+                  {name: "contact", path: "/taskhive/contact"},
+                  {name: "Sign in", path: "/taskhive/signin"}
                 ].map((item, idx) => (
                   <Link 
                     className={`text-black text-lg font-medium capitalize ${idx === 4 && "md:ml-32"} relative group font-sans`} 
@@ -50,11 +50,11 @@ const Navbar = () => {
          {isOpen && (
            <div className='md:hidden absolute top-16 left-0 right-0 bg-white py-4 px-4 shadow-md flex flex-col gap-4'>
              {[
-               {name: "Home", path: "/"},
-               {name: "pricing", path: "/pricing"},
-               {name: "Our Work", path: "/work"},
-               {name: "contact", path: "/contact"},
-               {name: "Sign in", path: "/signin"}
+               {name: "Home", path: "/taskhive"},
+               {name: "pricing", path: "/taskhive/pricing"},
+               {name: "Our Work", path: "/taskhive/work"},
+               {name: "contact", path: "/taskhive/contact"},
+               {name: "Sign in", path: "/taskhive/signin"}
              ].map((item, idx) => (
                <Link 
                  className='text-black text-lg font-medium capitalize relative group font-sans' 

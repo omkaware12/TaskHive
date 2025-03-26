@@ -40,7 +40,7 @@ const SignUp = () => {
     console.log("Saving to Context:", formData);
     setUserData(formData); 
     
-    navigate("/otp"); 
+    navigate("/taskhive/otp"); 
   };
 
   return (

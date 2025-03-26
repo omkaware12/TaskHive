@@ -1,14 +1,37 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contextAPI/index"; 
 import Sidebar from "./Sidebar";
 
 const AccountSettings = () => {
   const navigate = useNavigate();
-  const { userData } = useAuth();
-  const [profileData, setProfileData] = useState(userData || {});
-  const [profileImage, setProfileImage] = useState(profileData?.profileImage || null);
+  const { userData, updateUserData } = useAuth();
+  const [profileData, setProfileData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    profileImage: null,
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [profileImage, setProfileImage] = useState(null);
   const fileInputRef = useRef(null);
+
+  // Update local state when userData changes
+  useEffect(() => {
+    console.log("userData from context:", userData);
+    if (userData) {
+      setProfileData(prevData => ({
+        ...prevData,
+        firstName: userData.firstName || '',
+        lastName: userData.lastName || '',
+        email: userData.email || '',
+        profileImage: userData.profileImage || null
+      }));
+      setProfileImage(userData.profileImage || null);
+    }
+  }, [userData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,7 +63,9 @@ const AccountSettings = () => {
 
   const handleSaveProfile = () => {
     console.log("Saving profile data:", profileData);
-    // Add API call here
+    // Update the context with the new profile data
+    updateUserData(profileData);
+    // Add API call here to save to backend
   };
 
   const handleUpdatePassword = () => {

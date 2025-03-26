@@ -1,6 +1,12 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
+  const navigate = useNavigate();
+
+  const handleSignUp = () => {
+    navigate("/taskhive/signup");
+  };
+
   return (
     <div className="bg-gradient-to-b from-white to-blue-100 min-h-screen flex flex-col items-center justify-center text-center p-6">
       <div className="max-w-5xl mx-auto">
@@ -14,12 +20,12 @@ export default function LandingPage() {
           <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-medium transition-colors">
             Learn more
           </button>
-          <Link 
-            to="/signup"
+          <button 
+            onClick={handleSignUp}
             className="border border-blue-600 text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-lg text-lg font-medium transition-colors text-center"
           >
             Sign Up
-          </Link>
+          </button>
         </div>
       </div>
     </div>

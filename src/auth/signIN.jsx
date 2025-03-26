@@ -35,7 +35,7 @@ const signIN = () => {
         
         console.log(formdata);
         setIsSubmitting(false);
-        navigate("/dashboard");
+        navigate("/taskhive/dashboard/project");
     }
     
   return (
@@ -52,7 +52,7 @@ const signIN = () => {
         </div>
 
         <div className="bg-white shadow-md rounded-xl w-full p-8">
-          <h2 className="text-3xl font-bold mb-8 text-blue-600">Sign in</h2>
+          <h2 className="text-3xl font-bold mb-8 ">Sign in</h2>
           
           <form className="space-y-6" onSubmit={show}>
             <div>
@@ -97,7 +97,7 @@ const signIN = () => {
             <p className="text-gray-600 text-sm">
               Don't have an account?
             </p>
-            <Link to="/signup" className="bg-white border border-blue-300 text-blue-600 px-4 py-2 rounded-lg text-sm hover:bg-blue-50">
+            <Link to="/taskhive/signup" className="bg-white border border-blue-300 text-blue-600 px-4 py-2 rounded-lg text-sm hover:bg-blue-50">
               Sign up
             </Link>
           </div>
