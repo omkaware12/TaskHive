@@ -23,9 +23,7 @@ import Manageplan from "./Dashboard/Manageplan";
 import Back from "./planning/Back"
 import Board from "./Board/baord"
 import Calender from "./Calender/Calender"
-// Remove this duplicate import
-// import React from 'react';
-// import Back from './planning/Back'; // Ensure the path is correct
+import Code from "./Code/Code"
 
 const App = () => {
   return (
@@ -56,6 +54,7 @@ const App = () => {
             <Route path="/project/:id/backlog" element={<Back/>} />
             <Route path="/project/:id/board" element={<Board/>}/>
             <Route path="/project/:id/calendar" element={<Calender/>}/>
+            <Route path="/project/:id/code" element={<Code/>}/>
           </Routes>
         </Router>
       </ProjectProvider>
