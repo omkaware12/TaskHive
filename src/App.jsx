@@ -22,10 +22,12 @@ import Profile from "./Dashboard/profile";
 import Manageplan from "./Dashboard/Manageplan";
 import Back from "./planning/Back"
 import Board from "./Board/baord"
+import Calender from "./Calender/Calender"
+// Remove this duplicate import
+// import React from 'react';
+// import Back from './planning/Back'; // Ensure the path is correct
 
-
-
-function App() {
+const App = () => {
   return (
     <AuthProvider>
       <ProjectProvider>
@@ -53,11 +55,12 @@ function App() {
             <Route path="/manage-plan" element={<Manageplan />} />
             <Route path="/project/:id/backlog" element={<Back/>} />
             <Route path="/project/:id/board" element={<Board/>}/>
+            <Route path="/project/:id/calendar" element={<Calender/>}/>
           </Routes>
         </Router>
       </ProjectProvider>
     </AuthProvider>
   );
-}
+};
 
 export default App;

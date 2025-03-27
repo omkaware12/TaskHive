@@ -2,58 +2,58 @@ import React, { useState } from 'react';
 import { Plus, ChevronDown } from 'lucide-react';
 
 const IssueManager = ({ projectId }) => {
-  const [issues, setIssues] = useState([]);
-  const [isCreatingIssue, setIsCreatingIssue] = useState(false);
+  const [stories, setStories] = useState([]);
+  const [isCreatingStory, setIsCreatingStory] = useState(false);
   const [backlogExpanded, setBacklogExpanded] = useState(true);
-  const [newIssue, setNewIssue] = useState({
+  const [newStory, setNewStory] = useState({
     id: '',
     title: '',
-    type: 'TASK',
+    type: 'STORY',
     status: 'TO DO'
   });
 
-  // Handle creating a new issue
-  const handleCreateIssue = () => {
-    setIsCreatingIssue(true);
+  // Handle creating a new story
+  const handleCreateStory = () => {
+    setIsCreatingStory(true);
   };
   
-  // Handle saving a new issue
-  const handleSaveIssue = () => {
-    if (newIssue.title.trim() === '') return;
+  // Handle saving a new story
+  const handleSaveStory = () => {
+    if (newStory.title.trim() === '') return;
     
-    const issueId = issues.length + 1;
-    const issueWithId = {
-      ...newIssue,
-      id: `TASK-${issueId}`,
+    const storyId = stories.length + 1;
+    const storyWithId = {
+      ...newStory,
+      id: `STORY-${storyId}`,
       created: new Date().toISOString(),
       projectId: projectId
     };
     
-    setIssues([...issues, issueWithId]);
-    setIsCreatingIssue(false);
-    setNewIssue({
+    setStories([...stories, storyWithId]);
+    setIsCreatingStory(false);
+    setNewStory({
       id: '',
       title: '',
-      type: 'TASK',
+      type: 'STORY',
       status: 'TO DO'
     });
   };
   
-  // Handle canceling issue creation
-  const handleCancelIssue = () => {
-    setIsCreatingIssue(false);
-    setNewIssue({
+  // Handle canceling story creation
+  const handleCancelStory = () => {
+    setIsCreatingStory(false);
+    setNewStory({
       id: '',
       title: '',
-      type: 'TASK',
+      type: 'STORY',
       status: 'TO DO'
     });
   };
   
-  // Handle input change for new issue
-  const handleIssueInputChange = (e) => {
-    setNewIssue({
-      ...newIssue,
+  // Handle input change for new story
+  const handleStoryInputChange = (e) => {
+    setNewStory({
+      ...newStory,
       title: e.target.value
     });
   };
@@ -66,7 +66,7 @@ const IssueManager = ({ projectId }) => {
             {backlogExpanded ? <ChevronDown size={16} /> : <ChevronDown size={16} className="transform -rotate-90" />}
           </button>
           <div className="font-medium">Backlog</div>
-          <div className="text-xs text-gray-500 ml-2">({issues.length} {issues.length === 1 ? 'issue' : 'issues'})</div>
+          <div className="text-xs text-gray-500 ml-2">({stories.length} {stories.length === 1 ? 'story' : 'stories'})</div>
         </div>
         
         <div className="flex items-center">
@@ -85,32 +85,32 @@ const IssueManager = ({ projectId }) => {
       
       {backlogExpanded && (
         <div>
-          {issues.length === 0 && !isCreatingIssue ? (
+          {stories.length === 0 && !isCreatingStory ? (
             <div className="p-6 text-center text-gray-500">
               Your backlog is empty.
               <div className="mt-2">
                 <button 
                   className="flex items-center mx-auto text-blue-600 hover:text-blue-700 font-medium"
-                  onClick={handleCreateIssue}
+                  onClick={handleCreateStory}
                 >
-                  <Plus size={16} className="mr-1" /> Create issue
+                  <Plus size={16} className="mr-1" /> Create story
                 </button>
               </div>
             </div>
           ) : (
             <div>
-              {/* Issue list */}
-              {issues.map((issue, index) => (
+              {/* Story list */}
+              {stories.map((story, index) => (
                 <div key={index} className="border-b border-gray-200 hover:bg-gray-50">
                   <div className="flex items-center p-3">
                     <input type="checkbox" className="mr-3 h-4 w-4 text-blue-600 rounded" />
                     <div className="flex items-center">
-                      <span className="text-blue-600 text-sm font-medium mr-2">{issue.id}</span>
-                      <span className="text-gray-800">{issue.title}</span>
+                      <span className="text-blue-600 text-sm font-medium mr-2">{story.id}</span>
+                      <span className="text-gray-800">{story.title}</span>
                     </div>
                     <div className="ml-auto flex items-center">
                       <div className="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded">
-                        {issue.status}
+                        {story.status}
                       </div>
                       <div className="ml-2">
                         <img 
@@ -124,24 +124,24 @@ const IssueManager = ({ projectId }) => {
                 </div>
               ))}
               
-              {/* Create issue input */}
-              {isCreatingIssue && (
+              {/* Create story input */}
+              {isCreatingStory && (
                 <div className="border-b border-gray-200 bg-blue-50">
                   <div className="flex items-center p-3">
                     <input type="checkbox" className="mr-3 h-4 w-4 text-blue-600 rounded" disabled />
                     <div className="flex-grow">
                       <input
                         type="text"
-                        placeholder="What needs to be done?"
+                        placeholder="What's your user story?"
                         className="w-full border-b border-gray-300 bg-transparent py-1 focus:outline-none focus:border-blue-500"
-                        value={newIssue.title}
-                        onChange={handleIssueInputChange}
+                        value={newStory.title}
+                        onChange={handleStoryInputChange}
                         autoFocus
                         onKeyDown={(e) => {
                           if (e.key === 'Enter') {
-                            handleSaveIssue();
+                            handleSaveStory();
                           } else if (e.key === 'Escape') {
-                            handleCancelIssue();
+                            handleCancelStory();
                           }
                         }}
                       />
@@ -149,13 +149,13 @@ const IssueManager = ({ projectId }) => {
                     <div className="ml-2 flex items-center">
                       <button 
                         className="text-gray-500 hover:text-gray-700 mr-2"
-                        onClick={handleCancelIssue}
+                        onClick={handleCancelStory}
                       >
                         Cancel
                       </button>
                       <button 
                         className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
-                        onClick={handleSaveIssue}
+                        onClick={handleSaveStory}
                       >
                         Create
                       </button>
@@ -164,14 +164,14 @@ const IssueManager = ({ projectId }) => {
                 </div>
               )}
               
-              {/* Create issue button (when issues exist) */}
-              {!isCreatingIssue && (
+              {/* Create story button (when stories exist) */}
+              {!isCreatingStory && (
                 <div className="p-3 border-b border-gray-200 hover:bg-gray-50">
                   <button 
                     className="flex items-center text-blue-600 hover:text-blue-700"
-                    onClick={handleCreateIssue}
+                    onClick={handleCreateStory}
                   >
-                    <Plus size={16} className="mr-1" /> Create issue
+                    <Plus size={16} className="mr-1" /> Create story
                   </button>
                 </div>
               )}
