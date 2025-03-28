@@ -96,10 +96,10 @@ export default function ManagePlan() {
                 <div 
                   key={index} 
                   className={`bg-white rounded-lg border border-gray-200
-                    overflow-hidden transition-all duration-300 hover:border-black hover:shadow-lg group`}
+                    overflow-hidden transition-all duration-300 hover:border-black hover:shadow-lg group flex flex-col`}
                 >
                   {/* Card header */}
-                  <div className="p-5 border-b border-gray-100">
+                  <div className="p-5 border-b border-gray-100 flex-grow">
                     <div className="flex justify-between items-center">
                       <h3 className="text-lg font-medium">{plan.name}</h3>
                       <span className="text-xs bg-gray-100 px-2 py-1 rounded-full">{plan.users} {typeof plan.users === 'number' && plan.users === 1 ? 'user' : 'users'}</span>
@@ -109,32 +109,38 @@ export default function ManagePlan() {
                       <span className="text-gray-500 text-sm">{plan.period}</span>
                     </div>
                     <p className="text-gray-600 text-sm mt-2 h-12">{plan.description}</p>
-                    
-                    <button 
-                      className={`w-full py-2 mt-4 rounded text-sm font-medium transition-colors duration-300
-                        ${plan.recommended 
-                          ? 'bg-white text-black border border-blue-500 hover:bg-blue-600 hover:text-white hover:border-transparent' 
-                          : index === 0 
-                            ? 'bg-gray-200 text-gray-800 group-hover:bg-blue-500 group-hover:text-white' 
-                            : 'bg-white text-black border border-gray-300 hover:bg-blue-500 hover:text-white hover:border-transparent'
-                        }`}
-                    >
-                      {plan.buttonText}
-                    </button>
                   </div>
                   
-                  {/* Features list */}
-                  <div className="p-5">
-                    <ul className="space-y-3">
-                      {plan.features.map((feature, i) => (
-                        <li key={i} className="flex items-start text-sm">
-                          <span className="text-blue-500 mr-2 mt-0.5">
-                            <FaCheck size={12} />
-                          </span>
-                          <span className="text-gray-700">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  {/* Features and Button Container */}
+                  <div className="flex flex-col justify-between flex-grow">
+                    {/* Features list */}
+                    <div className="p-5 flex-grow">
+                      <ul className="space-y-3">
+                        {plan.features.map((feature, i) => (
+                          <li key={i} className="flex items-start text-sm">
+                            <span className="text-blue-500 mr-2 mt-0.5">
+                              <FaCheck size={12} />
+                            </span>
+                            <span className="text-gray-700">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    {/* Button */}
+                    <div className="p-5 pt-0">
+                      <button 
+                        className={`w-full py-2 rounded text-sm font-medium transition-colors duration-300
+                          ${plan.recommended 
+                            ? 'bg-white text-black border border-blue-500 hover:bg-blue-600 hover:text-white hover:border-transparent' 
+                            : index === 0 
+                              ? 'bg-gray-200 text-gray-800 group-hover:bg-blue-500 group-hover:text-white' 
+                              : 'bg-white text-black border border-gray-300 hover:bg-blue-500 hover:text-white hover:border-transparent'
+                          }`}
+                      >
+                        {plan.buttonText}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
