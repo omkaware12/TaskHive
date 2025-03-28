@@ -1,256 +1,85 @@
 import React, { useEffect, useState, useContext } from 'react'
-import BackNavbar from "./navbar.jsx"
-import ProjectSidebar from "./sidebar"
-import EpicSidebar from "./EpicSidebar"
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { ProjectContext } from '../contextAPI/projectcontext'
 import { Menu, Search, ChevronDown, Plus, MoreHorizontal, Settings, X } from 'lucide-react'
-import IssueManager from "./IssueManager"
+
+// Import custom components and hooks
+import BackNavbar from "./navbar"
+import ProjectSidebar from "./sidebar"
+import EpicSidebar from "./EpicSidebar"
 import DraggableIssue from "./DraggableIssue"
- // import TaskCreationModal from './TaskCreationModal'; // Make sure this component exists
+
+// Import custom hooks and utilities
+import { useProjectUtils } from '../hooks/projectutils'
+import { useSidebarToggle } from '../hooks/usesidebartoggle'
+import { useIssueManagement } from '../hooks/useissuemanagement'
+
+// At the top of your file, make sure you have this import:
+import TaskCreationModal from './TaskCreationModal';
+
+// Remove the SprintManager import and implementation
 
 const Back = () => {
   const { projectId } = useParams();
   const { project } = useContext(ProjectContext);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [epicExpanded, setEpicExpanded] = useState(false);
-  const [sprintExpanded, setSprintExpanded] = useState(true);
-  const [backlogExpanded, setBacklogExpanded] = useState(true);
+  const navigate = useNavigate();
   
-  // Add missing state variables for issues
-  const [issues, setIssues] = useState([]);
-  const [isCreatingIssue, setIsCreatingIssue] = useState(false);
+  // Remove the startSprint from SprintManager
   
-  // Add state for sprint issues
-  const [sprintIssues, setSprintIssues] = useState([]);
-  
-  // Add state and handlers for creating stories in sprint
-  const [isCreatingSprintStory, setIsCreatingSprintStory] = useState(false);
-  
-  // Add state for task creation
-  const [taskModalOpen, setTaskModalOpen] = useState(false);
-  const [selectedStory, setSelectedStory] = useState(null);
-  const [newTaskTitle, setNewTaskTitle] = useState('');
-  const [currentTasks, setCurrentTasks] = useState([]);
+  // Custom hooks for various functionalities
+  const { 
+    sidebarOpen, 
+    epicExpanded, 
+    sprintExpanded, 
+    backlogExpanded, 
+    toggleSidebar, 
+    setSidebarOpen,
+    setEpicExpanded, 
+    setSprintExpanded, 
+    setBacklogExpanded 
+  } = useSidebarToggle(projectId);
 
-  // Add these functions to handle inline task creation
-  const handleAddTask = () => {
-    if (newTaskTitle.trim()) {
-      setCurrentTasks([...currentTasks, { title: newTaskTitle, completed: false }]);
-      setNewTaskTitle('');
-    }
-  };
+  const { 
+    issues, 
+    sprintIssues, 
+    isCreatingIssue,
+    isCreatingSprintStory,
+    backlogIssueInput,
+    sprintStoryInput,
+    setBacklogIssueInput,
+    setSprintStoryInput,
+    handleCreateIssue,
+    handleIssueCreated,
+    handleCancelIssue,
+    handleCreateSprintStory,
+    handleSprintStoryCreated,
+    handleCancelSprintStory,
+    handleDragStart,
+    handleDragEnd,
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
+    // Task management
+    taskModalOpen,
+    selectedStory,
+    taskInput,
+    currentTasks,
+    setTaskInput,
+    handleCreateTask,
+    handleAddTask,
+    handleRemoveTask,
+    handleToggleTaskComplete,
+    handleSaveTasks,
+    handleCancelTasks
+  } = useIssueManagement(projectId);
 
-  const handleRemoveTask = (index) => {
-    setCurrentTasks(currentTasks.filter((_, i) => i !== index));
-  };
+  const { 
+    currentProject, 
+    projectName, 
+    projectType 
+  } = useProjectUtils(project, projectId);
 
-  const handleToggleTaskComplete = (index) => {
-    setCurrentTasks(currentTasks.map((task, i) => 
-      i === index ? { ...task, completed: !task.completed } : task
-    ));
-  };
-  
-  // Handle opening the task creation modal
-  const handleCreateTask = (story) => {
-    setSelectedStory(story);
-    setCurrentTasks(story.tasks || []);
-    setTaskModalOpen(true);
-  };
-
-  // Handle saving tasks
-  const handleSaveTasks = () => {
-    if (selectedStory) {
-      if (selectedStory.area === 'sprint' || sprintIssues.some(i => i.id === selectedStory.id)) {
-        // Update sprint issues
-        setSprintIssues(sprintIssues.map(issue => 
-          issue.id === selectedStory.id ? { ...issue, tasks: currentTasks } : issue
-        ));
-      } else {
-        // Update backlog issues
-        setIssues(issues.map(issue => 
-          issue.id === selectedStory.id ? { ...issue, tasks: currentTasks } : issue
-        ));
-      }
-      setTaskModalOpen(false);
-    }
-  };
-  
-  const handleCreateSprintStory = () => {
-    setIsCreatingSprintStory(true);
-  };
-  
-  const handleSprintStoryCreated = (newStory) => {
-    setSprintIssues([...sprintIssues, newStory]);
-    setIsCreatingSprintStory(false);
-  };
-  
-  const handleCancelSprintStory = () => {
-    setIsCreatingSprintStory(false);
-  };
-  
-  // Handle drag start
-  const handleDragStart = (e, issue) => {
-    e.dataTransfer.setData("issueId", issue.id);
-    e.dataTransfer.setData("sourceArea", issue.area || (sprintIssues.some(i => i.id === issue.id) ? 'sprint' : 'backlog'));
-    
-    // Add visual feedback for dragging
-    e.currentTarget.classList.add('opacity-50');
-    setTimeout(() => {
-      e.currentTarget.classList.add('dragging');
-    }, 0);
-  };
-  
-  // Handle drag end
-  const handleDragEnd = (e) => {
-    e.currentTarget.classList.remove('opacity-50', 'dragging');
-  };
-  
-  // Handle drag over
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    // Add visual indication of drop target
-    e.currentTarget.classList.add('bg-blue-50');
-  };
-  
-  // Handle drag leave
-  const handleDragLeave = (e) => {
-    e.currentTarget.classList.remove('bg-blue-50');
-  };
-  
-  // Handle drop
-  const handleDrop = (e, targetArea) => {
-    e.preventDefault();
-    e.currentTarget.classList.remove('bg-blue-50');
-    
-    const issueId = e.dataTransfer.getData("issueId");
-    const sourceArea = e.dataTransfer.getData("sourceArea");
-    
-    // If source and target are the same, do nothing
-    if (sourceArea === targetArea) return;
-    
-    if (targetArea === 'sprint') {
-      // Find the issue in the backlog
-      const issueToMove = issues.find(issue => issue.id === issueId);
-      if (issueToMove) {
-        // Add area property to track where the issue belongs
-        const issueWithArea = { ...issueToMove, area: 'sprint' };
-        
-        // Add to sprint issues
-        setSprintIssues([...sprintIssues, issueWithArea]);
-        // Remove from backlog issues
-        setIssues(issues.filter(issue => issue.id !== issueId));
-      }
-    } else if (targetArea === 'backlog') {
-      // Find the issue in the sprint
-      const issueToMove = sprintIssues.find(issue => issue.id === issueId);
-      if (issueToMove) {
-        // Add area property to track where the issue belongs
-        const issueWithArea = { ...issueToMove, area: 'backlog' };
-        
-        // Add to backlog issues
-        setIssues([...issues, issueWithArea]);
-        // Remove from sprint issues
-        setSprintIssues(sprintIssues.filter(issue => issue.id !== issueId));
-      }
-    }
-  };
-  
-  // Add missing functions for issue management
-  const handleCreateIssue = () => {
-    setIsCreatingIssue(true);
-  };
-  
-  const handleIssueCreated = (newIssue) => {
-    setIssues([...issues, newIssue]);
-    setIsCreatingIssue(false);
-  };
-  
-  const handleCancelIssue = () => {
-    setIsCreatingIssue(false);
-  };
-  
-  // Find the current project from context
-  const currentProject = project && Array.isArray(project) ? 
-    project.find(p => p.id === projectId || p.id?.toString() === projectId) : null;
-  
-  // Find the current project from context with improved logging
-  useEffect(() => {
-    console.log("Project context data:", project);
-    console.log("Current project ID:", projectId);
-    
-    if (project && Array.isArray(project)) {
-      const found = project.find(p => p.id === projectId || p.id?.toString() === projectId);
-      console.log("Found project:", found);
-    }
-  }, [project, projectId]);
-  
-  // Improved project name resolution with multiple fallbacks
-  const projectName = currentProject?.projectName || 
-                     (localStorage.getItem('currentProject') ? 
-                      JSON.parse(localStorage.getItem('currentProject'))?.projectName : 
-                      `Project ${projectId}`);
-  const projectType = currentProject?.projectType || "Software project";
-  
-  // Toggle sidebar on small screens
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
-  
-  // Close sidebar on small screens when clicking outside
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setSidebarOpen(false);
-      } else {
-        setSidebarOpen(true);
-      }
-    };
-    
-    // Set initial state based on screen size
-    handleResize();
-    
-    // Add event listener
-    window.addEventListener('resize', handleResize);
-    
-    // Cleanup
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-  
-  // Close epic sidebar when resizing to mobile
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 640) {
-        setEpicExpanded(false);
-      }
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-  
-  // Add this useEffect for CSS styles
-  useEffect(() => {
-    // Add CSS for drag and drop visual feedback
-    const style = document.createElement('style');
-    style.textContent = `
-      .dragging {
-        border: 2px dashed #3b82f6 !important;
-        background-color: rgba(59, 130, 246, 0.05) !important;
-      }
-      
-      .drag-over {
-        background-color: rgba(59, 130, 246, 0.1);
-        border: 2px dashed #3b82f6;
-      }
-    `;
-    document.head.appendChild(style);
-    
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
-  
+  // Render the component
   return (
     <div className="flex flex-col h-screen">
       <BackNavbar projectName={projectName} />
@@ -375,8 +204,14 @@ const Back = () => {
                     <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs border-2 border-white">{sprintIssues.length}</div>
                     <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs border-2 border-white">0</div>
                   </div>
-                  <button className="px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 whitespace-nowrap">
-                    Complete sprint
+                  <button 
+                    className="px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 whitespace-nowrap"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent toggling sprint expanded state
+                      startSprint(sprintIssues);
+                    }}
+                  >
+                    Start sprint
                   </button>
                   <button className="ml-2 text-gray-500">
                     <MoreHorizontal size={16} />
@@ -410,6 +245,7 @@ const Back = () => {
                           key={index} 
                           issue={issue} 
                           onDragStart={handleDragStart}
+                          onDragEnd={handleDragEnd}
                           onCreateTask={handleCreateTask}
                         />
                       ))}
@@ -543,6 +379,7 @@ const Back = () => {
                           key={index} 
                           issue={issue} 
                           onDragStart={handleDragStart}
+                          onDragEnd={handleDragEnd}
                           onCreateTask={handleCreateTask}
                         />
                       ))}
@@ -628,26 +465,20 @@ const Back = () => {
         </div>
       </div>
       
-      {/* Remove the entire task creation UI block from here */}
-    </div>
-  );
+      {/* Task Creation Modal */}
+      <TaskCreationModal
+        isOpen={taskModalOpen}
+        onClose={handleCancelTasks}
+        story={selectedStory}
+        taskInput={taskInput}
+        setTaskInput={setTaskInput}
+        currentTasks={currentTasks}
+        onAddTask={handleAddTask}
+        onRemoveTask={handleRemoveTask}
+        onToggleComplete={handleToggleTaskComplete}
+        onSaveTasks={handleSaveTasks}
+      />
+   /</div> );
 };
 
 export default Back;
-
-// Handle creating tasks for a story
-  const handleCreateTask = (story, tasks) => {
-    if (story) {
-      if (story.area === 'sprint' || sprintIssues.some(i => i.id === story.id)) {
-        // Update sprint issues
-        setSprintIssues(sprintIssues.map(issue => 
-          issue.id === story.id ? { ...issue, tasks } : issue
-        ));
-      } else {
-        // Update backlog issues
-        setIssues(issues.map(issue => 
-          issue.id === story.id ? { ...issue, tasks } : issue
-        ));
-      }
-    }
-  };
